@@ -1,6 +1,7 @@
 # Relevance
 
-A library for quickly sorting texts by relevance to any number of search terms
+A library for quickly ranking and sorting texts by relevance to any number of search terms
+using Open NLP
 
 ## Usage
 
@@ -8,9 +9,12 @@ A library for quickly sorting texts by relevance to any number of search terms
 
 ;; (relevance terms documents)
 
-(relevance ["python" "django"] 
+(def skills ["python" "SQL" "django"])
+
+(relevance skills
   {:a "Python and Django developers required for startups building web apps with Python." 
-   :b "Java developer wanted. Python experience optional. We use Spring and the JVM"})
+   :b "Java developer wanted. Python experience optional. We use Spring and the JVM"
+   :c "Bar tender wanted. No experience necessary. Glass collecting and free drinks"})
 
 ```
 

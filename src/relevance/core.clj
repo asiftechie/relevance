@@ -1,6 +1,5 @@
-(ns relevance.core)
+(ns relevance.core
+  (:require [opennlp.nlp]
+            [opennlp.tools.filters]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+
