@@ -69,9 +69,7 @@
       (pos-tag (tokenize sentence))) 
         sentences))
 
-(defn pos-tag-text [text]
-  (let [sentences (get-sentences text)]
-    (pos-tag-sentences sentences)))
+(def pos-tag-text (comp pos-tag-sentences get-sentences))
 
 ;; All these methods assume they are passed the result of a pos-ent tagger
 ;; i.e ["Word" "TAG"]
