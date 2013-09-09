@@ -5,43 +5,6 @@
 
 ;; Tokenizers. Models are loaded from disk
 
-;; CC Coordinating conjunction
-;; CD Cardinal number
-;; DT Determiner
-;; EX Existential there
-;; FW Foreign word
-;; IN Preposition or subordinating conjunction
-;; JJ Adjective
-;; JJR Adjective, comparative
-;; JJS Adjective, superlative
-;; LS List item marker
-;; MD Modal
-;; NN Noun, singular or mass
-;; NNS Noun, plural
-;; NNP Proper noun, singular
-;; NNPS Proper noun, plural
-;; PDT Predeterminer
-;; POS Possessive ending
-;; PRP Personal pronoun
-;; PRP$ Possessive pronoun
-;; RB Adverb
-;; RBR Adverb, comparative
-;; RBS Adverb, superlative
-;; RP Particle
-;; SYM Symbol
-;; TO to
-;; UH Interjection
-;; VB Verb, base form
-;; VBD Verb, past tense
-;; VBG Verb, gerund or present participle
-;; VBN Verb, past participle
-;; VBP Verb, non­3rd person singular present
-;; VBZ Verb, 3rd person singular present
-;; WDT Wh­determiner
-;; WP Wh­pronoun
-;; WP$ Possessive wh­pronoun
-;; WRB Wh­adverb
-
 (def get-sentences 
   (make-sentence-detector "models/en-sent.bin"))
 
@@ -71,26 +34,49 @@
 
 (def pos-tag-text (comp pos-tag-sentences get-sentences))
 
-;; All these methods assume they are passed the result of a pos-ent tagger
-;; i.e ["Word" "TAG"]
-;; TODO make this use core typed or something to make it clearer
 
-(def noun? (fn [[_ tag]] (= tag "NNS")))
+;; Filters for tagged items in the form [ITEM TAG]
+;; ******************************************************************
+
+(defn noun?
+  [[_ tag]]
+  (let [noun-tags #{"NN" "NNS" "NNP" "NNPS"}]
+    (contains? noun-tags tag)))
 
 (defn verb? 
   "Is this tagged item a verb form?"
-  [[_ item]]
+  [[_ tag]]
   (let [verb-tags #{"VB" "VBD" "VBG" "VBN" "VBP" "VBZ"}]
-    (contains? verb-tags item)))
+    (contains? verb-tags tag)))
 
 (defn adjective?
   "Is this tagged item an adjective?"
-  [[_ item]]
+  [[_ tag]]
   (let [adj-tags #{"JJ" "JJR" "JJS"}]
-    (contains? adj-tags item)))
+    (contains? adj-tags tag)))
 
-(defn extract-tag [sentences tag]
-  (let [tags (pos-tag-sentences sentences)]
-    tags))
+(defn noun-or-verb? [v] (or (noun? v) (verb? v)))
 
-;;    (map #(filter (fn [_ t] (= t tag)) %) tags)))
+(defn extract-predicate [predicate sentences]
+  (->> (pos-tag-sentences sentences)
+       (map (partial filter predicate))))
+
+;; Methods for extracting terms from text
+;; ******************************************************************
+
+(def extract-nouns-from-sentences (partial extract-predicate noun?))
+(def extract-verbs-from-sentences (partial extract-predicate verb?))
+(def extract-adjectives-from-sentences (partial extract-predicate adjective?))
+(def extract-noun-or-verb-from-sentences (partial extract-predicate noun-or-verb?))
+
+(defn extract-from-text
+  "Extract items from a text 
+   i.e extract all nouns or all verbs from a text"
+  [text predicate]
+  (extract-predicate predicate (get-sentences text)))
+
+(def extract-nouns-from-text (partial extract-from-text noun?))
+(def extract-verbs-from-text (partial extract-from-text verb?))
+(def extract-adjectives-from-text (partial extract-from-text adjective?))
+(def extract-noun-or-verb-from-text (partial extract-from-text noun-or-verb?))
+
