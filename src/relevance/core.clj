@@ -73,7 +73,23 @@
   (let [sentences (get-sentences text)]
     (pos-tag-sentences sentences)))
 
+;; All these methods assume they are passed the result of a pos-ent tagger
+;; i.e ["Word" "TAG"]
+;; TODO make this use core typed or something to make it clearer
+
 (def noun? (fn [[_ tag]] (= tag "NNS")))
+
+(defn verb? 
+  "Is this tagged item a verb form?"
+  [[_ item]]
+  (let [verb-tags #{"VB" "VBD" "VBG" "VBN" "VBP" "VBZ"}]
+    (contains? verb-tags item)))
+
+(defn adjective?
+  "Is this tagged item an adjective?"
+  [[_ item]]
+  (let [adj-tags #{"JJ" "JJR" "JJS"}]
+    (contains? adj-tags item)))
 
 (defn extract-tag [sentences tag]
   (let [tags (pos-tag-sentences sentences)]
