@@ -48,7 +48,6 @@
 
 (def pos-tag-text (comp pos-tag-sentences get-sentences))
 
-
 ;; Filters for tagged items in the form [ITEM TAG]
 ;; ******************************************************************
 
