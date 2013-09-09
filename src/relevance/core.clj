@@ -1,4 +1,5 @@
 (ns relevance.core
+  (:require [clojure.string :as str])
   (:use [opennlp.nlp]
         [opennlp.tools.filters]
         [opennlp.treebank]))
@@ -8,8 +9,21 @@
 (def get-sentences 
   (make-sentence-detector "models/en-sent.bin"))
 
-(def tokenize 
-  (make-tokenizer "models/en-token.bin"))
+(defn format-tokens 
+  "Normalize everything to lowercase"
+  [tokens]
+  (map #(.toLowerCase %) tokens))
+
+(def tokenize
+  (comp format-tokens
+        (make-tokenizer "models/en-token.bin")))
+
+(defn n-grams [n text]
+  (map (partial str/join " ")
+    (partition n (tokenize text))))
+
+(def bi-grams (partial n-grams 2))
+(def tri-grams (partial n-grams 3))
 
 (def pos-tag 
   (make-pos-tagger "models/en-pos-maxent.bin"))
@@ -80,3 +94,14 @@
 (def extract-adjectives-from-text (partial extract-from-text adjective?))
 (def extract-noun-or-verb-from-text (partial extract-from-text noun-or-verb?))
 
+;; Useful methods
+
+(defn term-frequency 
+  "Given a set of tokens and a term return the number of times
+   the term appears in the tokens"
+  [term tokens]
+  (reduce 
+    (fn [acc v] (if (= term v) (inc acc) acc)) 0 tokens))
+
+(def terms ["Java" "Scala" "JVM"])
+    
