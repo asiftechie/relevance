@@ -1,6 +1,6 @@
 # Relevance
 
-A library for quickly ranking and sorting texts by relevance to any number of search terms
+A library for ranking and sorting texts by relevance to any number of search terms
 using Open NLP
 
 ## Usage
