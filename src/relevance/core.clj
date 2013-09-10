@@ -19,7 +19,7 @@
         (make-tokenizer "models/en-token.bin")))
 
 (defn n-grams [n text]
-  (map (partial str/join " ")
+  (mapv (partial str/join " ")
     (partition n (tokenize text))))
 
 (def bi-grams (partial n-grams 2))
@@ -41,7 +41,7 @@
 (defn pos-tag-sentences 
   ""
   [sentences]
-  (map 
+  (mapv 
     (fn [sentence] 
       (pos-tag (tokenize sentence))) 
         sentences))
