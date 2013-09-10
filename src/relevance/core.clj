@@ -100,7 +100,10 @@
    the term appears in the tokens"
   [term tokens]
   (reduce 
-    (fn [acc v] (if (= term v) (inc acc) acc)) 0 tokens))
+    (fn [acc v] 
+      (if (= term v) 
+        (inc acc) 
+        acc)) 0 tokens))
 
 (def terms ["Java" "Scala" "JVM"])
     
