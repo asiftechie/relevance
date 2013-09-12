@@ -105,5 +105,16 @@
         (inc acc) 
         acc)) 0 tokens))
 
-(def terms ["Java" "Scala" "JVM"])
-    
+(defn top-n-terms 
+  "Extracts the top n terms from a given text"
+  [n text]
+  (letfn [(to-count [[k v]] [k (count v)])]
+    (let [words (tokenize text)]
+      (->> words 
+         (group-by identity)
+         (map to-count)
+         (sort-by second)
+         (reverse)
+         (take n)))))
+
+(def key-words (partial top-n-terms 10))
