@@ -16,3 +16,13 @@
   (dosync 
     (alter categories assoc category 
       (inc (get @categories category 0)))))
+
+(defn train [text]
+  (let [text (slurp text)
+        sentences (core/get-sentences text)]
+  (map (partial update-word-counts "python") sentences)))
+
+;; We can do smarter things here like
+;; filter only nouns and verbs and remove the stop words
+
+(defn test [] (train "training-data/python"))
