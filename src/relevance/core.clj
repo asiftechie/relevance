@@ -1,3 +1,4 @@
+
 (ns relevance.core
   (:require [clojure.string :as str])
   (:use [opennlp.nlp]
@@ -23,7 +24,18 @@
     (partition n (tokenize text))))
 
 (def bi-grams (partial n-grams 2))
+
 (def tri-grams (partial n-grams 3))
+
+;; Just word chars i.e strip out the crap
+(def words (partial re-seq #"[A-Za-z0-9]+"))
+
+(defn canonicalize 
+  "Return a canonical text -> only lowercase letters and blanks"
+  [text]
+  (clojure.string/join " " 
+    (->> (words text)
+         (map #(.toLowerCase %)))))
 
 (def pos-tag 
   (make-pos-tagger "models/en-pos-maxent.bin"))
@@ -36,7 +48,7 @@
 
 (defn extract-sentance-with-term [sentences term]
   (->> sentences
-       (filter (fn [sentence] (contains-term? sentence term)))))
+       (filter #(contains-term? % term))))
   
 (defn pos-tag-sentences 
   ""
