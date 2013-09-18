@@ -28,10 +28,13 @@
 (def tri-grams (partial n-grams 3))
 
 ;; Just word chars i.e strip out the crap
-(def words (partial re-seq #"[A-Za-z0-9]+"))
+(def words 
+  (let [default-word-expr #"[A-Za-z0-9]"]
+    (partial re-seq default-word-expr)))
 
 (defn canonicalize 
-  "Return a canonical text -> only lowercase letters and blanks"
+  "Return a canonical text 
+     -> only lowercase letters, numbers and spaces"
   [text]
   (clojure.string/join " " 
     (->> (words text)
