@@ -133,3 +133,12 @@
          (take n)))))
 
 (def key-words (partial top-n-terms 10))
+
+(defn term-sentence-extractor 
+  "Given a text and a set of tags, pull out any
+   sentences that contain one or more matching tags"
+  [text terms]
+  (let [sentences (get-sentences text)]
+    (filter #(re-find (re-pattern 
+                        (apply str 
+                          (interpose "|" terms))) %) sentences)))
